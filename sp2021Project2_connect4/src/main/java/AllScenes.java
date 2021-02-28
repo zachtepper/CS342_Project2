@@ -1,7 +1,7 @@
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 
-// class containing all scenes needed for the program
+// A class containing all scenes needed for the program
 public class AllScenes {
 
     public Scene welcomeScene() {
