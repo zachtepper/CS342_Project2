@@ -57,21 +57,35 @@ public class JavaFXTemplate extends Application {
 	
 	
 	public Scene gameScene() { // not actually void,, return a scene
+
+		/* commenting this out and adding it to Game class
+
 		// put this all in a vbox w that in center ??
 		GridPane gameGrid = new GridPane();
 		gameGrid.setStyle("-fx-background-color: darkGrey");
-		gameGrid.setMaxSize(700, 600);
-		
+		gameGrid.setMaxSize(800, 500);
+
+		// fill GridPane with GameButton instances
+		// disarm() each button so they cannot be clicked
 		for (int r = 0; r < 6; r++) {
 			for (int c = 0; c < 7; c++) {
 				board[r][c] = new GameButton();
-				board[r][c].setStyle("-fx-background-color: silver" + "-fx-border-size: 20");
+				board[r][c].setStyle("-fx-background-color: silver; -fx-border-size: 20; -fx-border-color: black;");
+				board[r][c].setDisable(true);
 				(board[r][c]).setMaxSize(100, 100);
 				(board[r][c]).setPrefSize(100, 100);
 				gameGrid.add(board[r][c], c, r);
 			}
 		}
-		
+		// arm() only the bottom row
+		for (int c = 0; c < 7; c++) {
+			board[5][c].setDisable(false);
+		}
+		*/
+
+		Game GameInstance = new Game();
+		GridPane gameGrid = GameInstance.getGrid();
+
 		Menu game = new Menu("Game Play");
 		MenuItem reverse = new MenuItem("reverse move");
 		game.getItems().add(reverse);
