@@ -34,4 +34,5 @@ public class GameButton extends Button {
 	public void click() {
 		clicked = true;
 	}
+	//
 }
