@@ -15,8 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class JavaFXTemplate extends Application {
-	private GameButton[][] board = new GameButton[6][7];
-	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
@@ -26,7 +25,7 @@ public class JavaFXTemplate extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
-		primaryStage.setTitle("Welcome to JavaFX");
+		primaryStage.setTitle("Connect Four");
 		
 		
 		
@@ -57,34 +56,9 @@ public class JavaFXTemplate extends Application {
 	
 	
 	public Scene gameScene() { // not actually void,, return a scene
-
-		/* commenting this out and adding it to Game class
-
-		// put this all in a vbox w that in center ??
-		GridPane gameGrid = new GridPane();
-		gameGrid.setStyle("-fx-background-color: darkGrey");
-		gameGrid.setMaxSize(800, 500);
-
-		// fill GridPane with GameButton instances
-		// disarm() each button so they cannot be clicked
-		for (int r = 0; r < 6; r++) {
-			for (int c = 0; c < 7; c++) {
-				board[r][c] = new GameButton();
-				board[r][c].setStyle("-fx-background-color: silver; -fx-border-size: 20; -fx-border-color: black;");
-				board[r][c].setDisable(true);
-				(board[r][c]).setMaxSize(100, 100);
-				(board[r][c]).setPrefSize(100, 100);
-				gameGrid.add(board[r][c], c, r);
-			}
-		}
-		// arm() only the bottom row
-		for (int c = 0; c < 7; c++) {
-			board[5][c].setDisable(false);
-		}
-		*/
-
 		Game GameInstance = new Game();
 		GridPane gameGrid = GameInstance.getGrid();
+
 
 		Menu game = new Menu("Game Play");
 		MenuItem reverse = new MenuItem("reverse move");
@@ -105,48 +79,35 @@ public class JavaFXTemplate extends Application {
 		TextField title = new TextField("CONNECT FOUR");
 		title.setStyle("-fx-font-size: 25;"+"-fx-border-size: 20;"+ 
 				"-fx-border-color: black;");
-		// highlight or something I guess...?
-		TextField p1 = new TextField("Player 1");
-		p1.setEditable(false);
-		TextField p2 = new TextField("Player 2");
-		p2.setEditable(false);
-		VBox players = new VBox(p1, p2);
+
+		VBox players = GameInstance.getPlayerStatus();
 		
 		BorderPane gameBorderPane = new BorderPane(gameGrid, null, players, moveInfo, menu);
 		gameBorderPane.setStyle("-fx-background-color: darkSeaGreen");
 		
 		return new Scene(gameBorderPane, 900, 900);
-		// set text to "CONNECT FOUR" or something
-		// move info textfield at bottom; initialize to "no moves made"...?
-		// player 1 and player 2 on right side, whichever one is playing
-		// is highlighted or has arrow next to it ?? (text colors correspond to game piece colors)
-		
 	}
-	
-	
+
+
+	// theme 0
 	public void ogTheme() {
 		// color 0 = gray
-		// color 1 = black
-		// color 2 = white
+		// color 1 = green
+		// color 2 = red
 	}
-	
+
+	// theme 1
 	public void theme1() {
 		// color 0 = blue
 		// color 1 = light blue
 		// color 2 = dark blue
 	}
-	
+
+	// theme 2
 	public void theme2() {
 		// color 0 = pink
-		// color 1 = green
-		// color 2 = dark gray ?
-	}
-	
-	public void winScene() {
-		// win message: 0 = tie, 1 = p1, 2 = p2...?
-		// play again button
-		// exit program button
-		
+		// color 1 = purple
+		// color 2 = orange
 	}
 	
 }
