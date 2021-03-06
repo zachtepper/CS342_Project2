@@ -1,5 +1,6 @@
 import javafx.application.Application;
-
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 
 import javafx.scene.control.Button;
@@ -84,12 +85,42 @@ public class JavaFXTemplate extends Application {
 
 		VBox players = GameInstance.getPlayerStatus();
 		
+		
+		
+		//newGame.setOnAction(e -> GameInstance = new Game());
+		
 		BorderPane gameBorderPane = new BorderPane(gameGrid, null, players, moveInfo, menu);
-		
-		
+		howTo.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent a) {
+				
+				
+				Text t = new Text("Take turns clicking non-grayed out spots so that your color"
+						+ " has 4 spots in a row (vertically, diagonally, or "
+						+ "horizontally) before the other player.");
+				t.setStyle("-fx-font-size: 32;");
+				t.setWrappingWidth(500);
+				VBox v = new VBox(t);
+				v.setPrefSize(500, 500);
+				Scene howToPlay = new Scene(v, 500, 500);
+				Stage htp = new Stage();
+				htp.setScene(howToPlay);
+				htp.show();
+			}
+		});
+		newGame.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent a) {
+				
+				
+				Game g = new Game();
+				GridPane gg = g.getGrid();
+				gameBorderPane.setCenter(gg);
+			}
+		});
 		ogTheme.setOnAction(e -> ogTheme(gameBorderPane, GameInstance));
 		theme1.setOnAction(e -> theme1(gameBorderPane, GameInstance));
 		theme2.setOnAction(e -> theme2(gameBorderPane, GameInstance));
+		
+		
 		gameBorderPane.setStyle("-fx-background-color: seaGreen");
 		
 		return new Scene(gameBorderPane, 900, 900);
@@ -110,7 +141,7 @@ public class JavaFXTemplate extends Application {
 
 	// theme 2
 	public void theme2(BorderPane bp, Game g) {
-		g.theme1();
+		g.theme2();
 		bp.setStyle("-fx-background-color: silver");
 	}
 	
