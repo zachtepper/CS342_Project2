@@ -54,29 +54,58 @@ public class Game {
 
     // theme 0
     public void ogTheme() {
-        // color 0 = gray
-        // color 1 = green
-        // color 2 = red
+    	theme = 0;
+        for (int r = 0; r < NUM_ROWS; r++) {
+            for (int c = 0; c < NUM_COLS; c++) {
+                if (board[r][c].getColor() == 0) {
+                    board[r][c].setStyle("-fx-background-color: silver");
+                } else if(board[r][c].getColor() == 1) {
+                    board[r][c].setStyle("-fx-background-color: yellowGreen");
+                } else {
+                    board[r][c].setStyle("-fx-background-color: tomato");
+                }
+            }     
+        }
     }
 
     // theme 1
     public void theme1() {
-        // color 0 = blue
-        // color 1 = light blue
-        // color 2 = dark blue
+    	theme = 1;
+        for (int r = 0; r < NUM_ROWS; r++) {
+            for (int c = 0; c < NUM_COLS; c++) {
+                if (board[r][c].getColor() == 0) {
+                    board[r][c].setStyle("-fx-background-color: mistyRose");
+                } else if(board[r][c].getColor() == 1) {
+                    board[r][c].setStyle("-fx-background-color: mediumVioletRed");
+                } else {
+                    board[r][c].setStyle("-fx-background-color: darkBlue");
+                }
+            }      
+        }
     }
 
     // theme 2
     public void theme2() {
-        // color 0 = pink
-        // color 1 = purple
-        // color 2 = orange
+    	theme = 2;
+        for (int r = 0; r < NUM_ROWS; r++) {
+            for (int c = 0; c < NUM_COLS; c++) {
+                if (board[r][c].getColor() == 0) {
+                    board[r][c].setStyle("-fx-background-color: pink");
+                } else if (board[r][c].getColor() == 1) {
+                    board[r][c].setStyle("-fx-background-color: darkMagenta");
+                } else if (board[r][c].getColor() == 2){
+                    board[r][c].setStyle("-fx-background-color: darkOrange");
+                }
+            }      
+        }
+       
+        // do I need to do background dif color...? silver...?
     }
 
     // private methods
 
     // methods to push/pop stack
-    private void push(GameButton button) {
+    public void push(GameButton button) {
         moveList.push(button);
         // will need to call a private method to check for a winning move
 
@@ -124,11 +153,32 @@ public class Game {
     }
 
     // this method is called when a GameButton is clicked
-    private void clickEvent() {
+    private void clickEvent(GameButton b) {
         // scan for a win
+    	moveList.push(b);
         if (scanForWin(currentTurn) == currentTurn) {
             System.out.println("PLAYER " + currentTurn + " WINS!");
         }
+        System.out.println("\n");
+        // update currentTurn
+        if (currentTurn == 1) {
+            currentTurn = 2;
+            // update status
+            p1.setStyle("-fx-background-color: grey");
+            p2.setStyle("-fx-background-color: yellow");
+        } else {
+            currentTurn = 1;
+            // update status
+            p1.setStyle("-fx-background-color: yellow");
+            p2.setStyle("-fx-background-color: grey");
+        }
+    }
+    
+ // this method is called when a GameButton is clicked
+    private void unclickEvent(GameButton b) {
+        // pop button from moveList
+    	moveList.pop();
+        
         System.out.println("\n");
         // update currentTurn
         if (currentTurn == 1) {
@@ -310,7 +360,7 @@ public class Game {
         public boolean isClicked() {
             return clicked;
         }
-
+        
         public void click() {
             clicked = true;
             this.setDisable(true);
@@ -318,23 +368,23 @@ public class Game {
             color = currentTurn;
             if (color == 1) {
                 if (theme == 0){
-                    this.setStyle("-fx-background-color: green; -fx-border-size: 20; -fx-border-color: black;");
+                    this.setStyle("-fx-background-color: yellowGreen; -fx-border-size: 20; -fx-border-color: black;");
                 }
                 else if (theme == 1) {
-                    this.setStyle("-fx-background-color: lightskyblue; -fx-border-size: 20; -fx-border-color: black;");
+                    this.setStyle("-fx-background-color: mediumVioletRed; -fx-border-size: 20; -fx-border-color: black;");
                 } else {
-                    this.setStyle("-fx-background-color: purple; -fx-border-size: 20; -fx-border-color: black;");
+                    this.setStyle("-fx-background-color: darkMagenta; -fx-border-size: 20; -fx-border-color: black;");
                 }
 
             }
             else if (color == 2) {
                 if (theme == 0) {
-                    this.setStyle("-fx-background-color: red; -fx-border-size: 20; -fx-border-color: black;");
+                    this.setStyle("-fx-background-color: tomato; -fx-border-size: 20; -fx-border-color: black;");
                 }
                 else if (theme == 1) {
-                    this.setStyle("-fx-background-color: darkblue; -fx-border-size: 20; -fx-border-color: black;");
+                    this.setStyle("-fx-background-color: darkBlue; -fx-border-size: 20; -fx-border-color: black;");
                 } else {
-                    this.setStyle("-fx-background-color: orange; -fx-border-size: 20; -fx-border-color: black;");
+                    this.setStyle("-fx-background-color: darkOrange; -fx-border-size: 20; -fx-border-color: black;");
                 }
             }
 
@@ -343,9 +393,30 @@ public class Game {
                 board[this.row-1][this.col].setDisable(false);
             }
 
-            clickEvent();
+            clickEvent(this);
         }
-
+        
+        public void unclick() {
+        	clicked = false;
+        	this.setDisable(false);
+        	
+        	// disables button above the unclicked button
+        	if (this.row != 0) {
+                 board[this.row-1][this.col].setDisable(true);
+            }
+        	
+        	if (theme == 0){
+                this.setStyle("-fx-background-color: silver; -fx-border-size: 20; -fx-border-color: black;");
+            }
+            else if (theme == 1) {
+                this.setStyle("-fx-background-color: mistyRose; -fx-border-size: 20; -fx-border-color: black;");
+            } else {
+                this.setStyle("-fx-background-color: pink; -fx-border-size: 20; -fx-border-color: black;");
+            }
+        	unclickEvent(this);
+        }
+        
+        
         // getters and setters
 
         public int getColor() {
