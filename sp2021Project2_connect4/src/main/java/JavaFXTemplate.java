@@ -1,5 +1,6 @@
 import javafx.application.Application;
-
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 
 import javafx.scene.control.Button;
@@ -46,7 +47,7 @@ public class JavaFXTemplate extends Application {
         // handler to switch scenes and start game
         // lilly note: should this be in main class...? maybe w getButton() function?
         // or do we just pass primary stage into each method and show...?
-        start.setOnAction(e -> primaryStage.setScene(gameScene()));
+        start.setOnAction(e -> primaryStage.setScene(gameScene(primaryStage)));
         // placing all elements into a BorderPane object
         BorderPane welcome = new BorderPane(start, welcome_text, null, null, null);
         welcome.setStyle("-fx-background-color: lightGreen");
@@ -55,7 +56,7 @@ public class JavaFXTemplate extends Application {
 	}
 	
 	
-	public Scene gameScene() { // not actually void,, return a scene
+	public Scene gameScene(Stage stage) { // not actually void,, return a scene
 		Game GameInstance = new Game();
 		GridPane gameGrid = GameInstance.getGrid();
 
@@ -67,9 +68,11 @@ public class JavaFXTemplate extends Application {
 		MenuItem howTo = new MenuItem("how to play");
 		MenuItem newGame = new MenuItem("new game");
 		MenuItem exit = new MenuItem("exit");
+		exit.setOnAction(e -> stage.close());
 		option.getItems().addAll(howTo, newGame, exit);
 		Menu theme = new Menu("Theme");
 		MenuItem ogTheme = new MenuItem("original theme");
+		
 		MenuItem theme1 = new MenuItem("theme one");
 		MenuItem theme2 = new MenuItem("theme two");
 		theme.getItems().addAll(ogTheme, theme1, theme2);
@@ -82,32 +85,64 @@ public class JavaFXTemplate extends Application {
 
 		VBox players = GameInstance.getPlayerStatus();
 		
+		
+		
+		//newGame.setOnAction(e -> GameInstance = new Game());
+		
 		BorderPane gameBorderPane = new BorderPane(gameGrid, null, players, moveInfo, menu);
-		gameBorderPane.setStyle("-fx-background-color: darkSeaGreen");
+		howTo.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent a) {
+				
+				
+				Text t = new Text("Take turns clicking non-grayed out spots so that your color"
+						+ " has 4 spots in a row (vertically, diagonally, or "
+						+ "horizontally) before the other player.");
+				t.setStyle("-fx-font-size: 32;");
+				t.setWrappingWidth(500);
+				VBox v = new VBox(t);
+				v.setPrefSize(500, 500);
+				Scene howToPlay = new Scene(v, 500, 500);
+				Stage htp = new Stage();
+				htp.setScene(howToPlay);
+				htp.show();
+			}
+		});
+		newGame.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent a) {
+				
+				
+				Game g = new Game();
+				GridPane gg = g.getGrid();
+				gameBorderPane.setCenter(gg);
+			}
+		});
+		ogTheme.setOnAction(e -> ogTheme(gameBorderPane, GameInstance));
+		theme1.setOnAction(e -> theme1(gameBorderPane, GameInstance));
+		theme2.setOnAction(e -> theme2(gameBorderPane, GameInstance));
+		
+		
+		gameBorderPane.setStyle("-fx-background-color: seaGreen");
 		
 		return new Scene(gameBorderPane, 900, 900);
 	}
 
 
 	// theme 0
-	public void ogTheme() {
-		// color 0 = gray
-		// color 1 = green
-		// color 2 = red
+	public void ogTheme(BorderPane bp, Game g) {
+		g.ogTheme();
+		bp.setStyle("-fx-background-color: seaGreen");
 	}
 
 	// theme 1
-	public void theme1() {
-		// color 0 = blue
-		// color 1 = light blue
-		// color 2 = dark blue
+	public void theme1(BorderPane bp, Game g) {
+		g.theme1();
+		bp.setStyle("-fx-background-color: mediumTurquoise");
 	}
 
 	// theme 2
-	public void theme2() {
-		// color 0 = pink
-		// color 1 = purple
-		// color 2 = orange
+	public void theme2(BorderPane bp, Game g) {
+		g.theme2();
+		bp.setStyle("-fx-background-color: silver");
 	}
 	
 }
