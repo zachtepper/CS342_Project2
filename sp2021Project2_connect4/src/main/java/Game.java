@@ -1,5 +1,6 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -135,13 +136,16 @@ public class Game {
     private void initGrid() {
         gameGrid.setStyle("-fx-background-color: darkGrey");
         gameGrid.setMaxSize(800, 500);
+        // adding spacing between each button
+        gameGrid.setPadding(new Insets(10, 10, 10, 10));
+        gameGrid.setHgap(10);
+        gameGrid.setVgap(10);
 
         // fill GridPane with GameButton instances
         // disarm() each button so they cannot be clicked
         for (int r = 0; r < NUM_ROWS; r++) {
             for (int c = 0; c < NUM_COLS; c++) {
                 board[r][c] = new GameButton(r, c);
-                board[r][c].setText("[" + r + "][" + c + "]");
                 (board[r][c]).setMaxSize(100, 100);
                 (board[r][c]).setPrefSize(100, 100);
                 gameGrid.add(board[r][c], c, r);
