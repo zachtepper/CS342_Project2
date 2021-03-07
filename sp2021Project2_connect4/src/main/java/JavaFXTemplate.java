@@ -119,11 +119,19 @@ public class JavaFXTemplate extends Application {
 		});
 		newGame.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent a) {
-				
-				
 				Game g = new Game();
 				GridPane gg = g.getGrid();
+				VBox list = new VBox(moveInfo, g.getMoveList());
+				VBox p = g.getPlayerStatus();
 				gameBorderPane.setCenter(gg);
+				gameBorderPane.setRight(list);
+				gameBorderPane.setBottom(p);
+
+				// resizing margins on bottom pane
+				Node b = players;
+				Insets bI = new Insets(0, 200, 100, 200);
+				gameBorderPane.setBottom(b);
+				BorderPane.setMargin(b, bI);
 			}
 		});
 		ogTheme.setOnAction(e -> ogTheme(gameBorderPane, GameInstance));

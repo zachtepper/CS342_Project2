@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class Game {
@@ -24,6 +25,7 @@ public class Game {
     private TextField p2;
     private VBox vbox;
     private int theme;
+    private ArrayList<GameButton> winningButtons; // holds each button that is part of a four in a row
 
     public Game() {
         currentTurn = 1; // start with player 1's turn
@@ -35,6 +37,7 @@ public class Game {
         moveList = FXCollections.observableArrayList();
         listView = new ListView<String>(moveList);
         buttonStack = new Stack<GameButton>();
+        winningButtons = new ArrayList<GameButton>();
     }
 
     // getters and setters
@@ -104,8 +107,6 @@ public class Game {
         }
     }
 
-    // private methods
-
     // methods to push/pop moveList
     public void push(GameButton button) {
         // push to button stack
@@ -169,7 +170,11 @@ public class Game {
     private void clickEvent(GameButton b) {
         // scan for a win
     	this.push(b);
-        if (scanForWin(currentTurn) == currentTurn) {
+        if (scanForWin(currentTurn)) {
+            // highlight all buttons in winningButtons
+            for (GameButton e : winningButtons) {
+                e.setStyle("-fx-border-color: yellow; -fx-background-color: yellow;");
+            }
             System.out.println("PLAYER " + currentTurn + " WINS!");
         }
         System.out.println("\n");
@@ -205,7 +210,9 @@ public class Game {
     }
 
     // will search the whole board to find four in a row
-    private int scanForWin(int p) {
+    private boolean scanForWin(int p) {
+        boolean winFound = false;
+
         System.out.println("Scanning for win...");
         for (int r = 0; r < NUM_ROWS; r++) {
             for (int c = 0; c < NUM_COLS; c++) {
@@ -218,60 +225,60 @@ public class Game {
                     // we can start searching, starting with search up four or down four
                     if (currRow >= 3) {
                         System.out.println("SEARCH UP");
-                        if (searchUp(r,c,p)) { return p; }
+                        if (searchUp(r,c,p)) { winFound = true; }
 
                     } else {
                         System.out.println("SEARCH DOWN");
-                        if (searchDown(r,c,p)) { return p; }
+                        if (searchDown(r,c,p)) { winFound = true; }
 
                     }
                     // search left or search right
                     if (currCol >= 3) {
                         System.out.println("SEARCH LEFT");
-                        if (searchLeft(r,c,p)) { return p; }
+                        if (searchLeft(r,c,p)) { winFound = true; }
 
                     }
                     if (currCol <= 3) {
                         System.out.println("SEARCH RIGHT");
-                        if (searchRight(r,c,p)) { return p; }
+                        if (searchRight(r,c,p)) { winFound = true; }
 
                     }
                     // finally check if we can search diagonally
                     if ( (currRow >= 3) && (currRow <= 5) ) {
                         if (currCol == 3) {
                             System.out.println("SEARCH UP LEFT");
-                            if (searchUpLeft(r,c,p)) { return p; }
+                            if (searchUpLeft(r,c,p)) { winFound = true; }
                             System.out.println("SEARCH UP RIGHT");
-                            if (searchUpRight(r,c,p)) { return p; }
+                            if (searchUpRight(r,c,p)) { winFound = true; }
 
                         }
                         else if (currCol < 3) {
                             System.out.println("SEARCH UP RIGHT");
-                            if (searchUpRight(r,c,p)) { return p; }
+                            if (searchUpRight(r,c,p)) { winFound = true; }
                         } else {
                             System.out.println("SEARCH UP LEFT");
-                            if (searchUpLeft(r,c,p)) { return p; }
+                            if (searchUpLeft(r,c,p)) { winFound = true; }
                         }
                     } else {
                         if (currCol == 3) {
                             System.out.println("SEARCH DOWN LEFT");
-                            if (searchDownLeft(r,c,p)) { return p; }
+                            if (searchDownLeft(r,c,p)) { winFound = true; }
                             System.out.println("SEARCH DOWN RIGHT");
-                            if (searchDownRight(r,c,p)) { return p; }
+                            if (searchDownRight(r,c,p)) { winFound = true; }
                         }
                         else if (currCol < 3) {
                             System.out.println("SEARCH DOWN RIGHT");
-                            if (searchDownRight(r,c,p)) { return p; }
+                            if (searchDownRight(r,c,p)) { winFound = true; }
                         } else {
                             System.out.println("SEARCH DOWN LEFT");
-                            if (searchDownLeft(r,c,p)) { return p; }
+                            if (searchDownLeft(r,c,p)) { winFound = true; }
                         }
                     }
                 } else { continue; } // skip iteration if button does not match specified player
             }
         }
 
-        return 0; // return 0 means no winning move has been found
+        return winFound; // return 0 means no winning move has been found
     }
 
     // private helper methods for scanForWin method
@@ -282,6 +289,11 @@ public class Game {
                 return false;
             }
         }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r-i][c];
+            winningButtons.add(curr);
+        }
         return true;
     }
     private boolean searchDown(int r, int c, int p) {
@@ -290,6 +302,11 @@ public class Game {
             if (curr.getColor() != p) {
                 return false;
             }
+        }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r+i][c];
+            winningButtons.add(curr);
         }
         return true;
     }
@@ -300,6 +317,11 @@ public class Game {
                 return false;
             }
         }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r][c-i];
+            winningButtons.add(curr);
+        }
         return true;
     }
     private boolean searchRight(int r, int c, int p) {
@@ -308,6 +330,11 @@ public class Game {
             if (curr.getColor() != p) {
                 return false;
             }
+        }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r][c+i];
+            winningButtons.add(curr);
         }
         return true;
     }
@@ -318,6 +345,11 @@ public class Game {
                 return false;
             }
         }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r-i][c-i];
+            winningButtons.add(curr);
+        }
         return true;
     }
     private boolean searchUpRight(int r, int c, int p) {
@@ -326,6 +358,11 @@ public class Game {
             if (curr.getColor() != p) {
                 return false;
             }
+        }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r-i][c+i];
+            winningButtons.add(curr);
         }
         return true;
     }
@@ -336,6 +373,11 @@ public class Game {
                 return false;
             }
         }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r+i][c-i];
+            winningButtons.add(curr);
+        }
         return true;
     }
     private boolean searchDownRight(int r, int c, int p) {
@@ -344,6 +386,11 @@ public class Game {
             if (curr.getColor() != p) {
                 return false;
             }
+        }
+        // if it doesn't return false, add these buttons into winningButtons
+        for (int i = 1; i < 4; i++) {
+            GameButton curr = board[r+i][c+i];
+            winningButtons.add(curr);
         }
         return true;
     }
