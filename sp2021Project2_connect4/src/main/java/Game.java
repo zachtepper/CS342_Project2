@@ -1,3 +1,4 @@
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -6,6 +7,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -27,6 +29,7 @@ public class Game {
     private VBox vbox;
     private int theme;
     private ArrayList<GameButton> winningButtons; // holds each button that is part of a four in a row
+    private int winner = -1;
 
     public Game() {
         currentTurn = 1; // start with player 1's turn
@@ -59,7 +62,25 @@ public class Game {
     public void setTheme(int t) { theme = t; }
 
     public ListView<String> getMoveList() { return listView; }
-
+    
+    // resets all information if new game started
+    public void reset() {
+    	board = new GameButton[6][7];
+        gameGrid = new GridPane();
+        this.initGrid();
+        this.initPlayerStatus();
+        theme = 0;
+        moveList = FXCollections.observableArrayList();
+        listView = new ListView<String>(moveList);
+        buttonStack = new Stack<GameButton>();
+        winningButtons = new ArrayList<GameButton>();
+    }
+    
+    // returns 1,2 if players win, 0 if tie, -1 if unfinished game
+    public int getWinner() {
+    	return winner;
+    }
+    
     // theme 0
     public void ogTheme() {
     	theme = 0;
@@ -169,7 +190,7 @@ public class Game {
         p2.setStyle("-fx-background-color: grey");
         p2.setEditable(false);
     }
-
+    
     // this method is called when a GameButton is clicked
     private void clickEvent(GameButton b) {
         // scan for a win
@@ -180,7 +201,19 @@ public class Game {
                 e.setStyle("-fx-border-color: yellow; -fx-background-color: yellow;");
             }
             System.out.println("PLAYER " + currentTurn + " WINS!");
+            winner = currentTurn;
+            gameGrid.setDisable(true);
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        	pause.setOnFinished(e-> JavaFXTemplate.stage.setScene(JavaFXTemplate.winScene(winner)));
+        	pause.play();
+        } else  if (moveList.size() == 42) {
+        	// if there is a tie and board is full
+        	// set delay
+        	PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        	pause.setOnFinished(e-> JavaFXTemplate.stage.setScene(JavaFXTemplate.winScene(0)));
+        	pause.play();
         }
+        
         System.out.println("\n");
         // update currentTurn
         if (currentTurn == 1) {
@@ -196,7 +229,7 @@ public class Game {
         }
     }
     
- // this method is called when a GameButton is clicked
+ // this method is called when a GameButton is unclicked
     private void unclickEvent(GameButton b) {
         System.out.println("\n");
         // update currentTurn
@@ -281,7 +314,7 @@ public class Game {
                 } else { continue; } // skip iteration if button does not match specified player
             }
         }
-
+        
         return winFound; // return 0 means no winning move has been found
     }
 
