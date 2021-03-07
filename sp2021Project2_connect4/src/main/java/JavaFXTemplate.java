@@ -1,13 +1,11 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -77,8 +75,11 @@ public class JavaFXTemplate extends Application {
 		MenuItem theme2 = new MenuItem("theme two");
 		theme.getItems().addAll(ogTheme, theme1, theme2);
 		MenuBar menu = new MenuBar(game, option, theme);
-		
-		TextField moveInfo = new TextField();
+
+		// this will hold the entire game's move history
+		TextField moveInfo = new TextField("Move List");
+		VBox listVBox = new VBox(moveInfo, GameInstance.getMoveList());
+
 		TextField title = new TextField("CONNECT FOUR");
 		title.setStyle("-fx-font-size: 25;"+"-fx-border-size: 20;"+ 
 				"-fx-border-color: black;");
@@ -89,7 +90,16 @@ public class JavaFXTemplate extends Application {
 		
 		//newGame.setOnAction(e -> GameInstance = new Game());
 		
-		BorderPane gameBorderPane = new BorderPane(gameGrid, null, players, moveInfo, menu);
+		BorderPane gameBorderPane = new BorderPane(gameGrid, null, listVBox, players, menu);
+		// resizing margins on bottom pane
+		Node bottom = players;
+		Insets bottomInsets = new Insets(0, 200, 100, 200);
+		gameBorderPane.setBottom(bottom);
+		BorderPane.setMargin(bottom, bottomInsets);
+
+		// adding functions to each button
+		reverse.setOnAction(e -> GameInstance.pop());
+
 		howTo.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent a) {
 				

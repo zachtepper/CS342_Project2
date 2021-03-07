@@ -1,4 +1,7 @@
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -12,28 +15,29 @@ public class Game {
     final int NUM_COLS = 7;
 
     private int currentTurn; // value is either 1 or 2 to represent player 1 or 2's turn to move
-    private Stack<GameButton> moveList;
+    private Stack<GameButton> buttonStack;
+    private ObservableList<String> moveList;
+    private ListView<String> listView;
     private GridPane gameGrid;
     private GameButton[][] board;
     private TextField p1;
     private TextField p2;
     private VBox vbox;
     private int theme;
-    private Player player1;
-    private Player player2;
 
     public Game() {
         currentTurn = 1; // start with player 1's turn
-        moveList = new Stack<GameButton>();
         board = new GameButton[6][7];
         gameGrid = new GridPane();
         this.initGrid();
-        vbox = this.initPlayerStatus();
+        this.initPlayerStatus();
         theme = 0;
-        player1 = new Player(1);
-        player2 = new Player(2);
+        moveList = FXCollections.observableArrayList();
+        listView = new ListView<String>(moveList);
+        buttonStack = new Stack<GameButton>();
     }
 
+    // getters and setters
     public int getCurrentTurn() {
         return currentTurn;
     }
@@ -48,9 +52,9 @@ public class Game {
 
     public int getTheme() { return theme; }
 
-    public void setTheme(int t) {
-        theme = t;
-    }
+    public void setTheme(int t) { theme = t; }
+
+    public ListView<String> getMoveList() { return listView; }
 
     // theme 0
     public void ogTheme() {
@@ -98,21 +102,32 @@ public class Game {
                 }
             }      
         }
-       
-        // do I need to do background dif color...? silver...?
     }
 
     // private methods
 
-    // methods to push/pop stack
+    // methods to push/pop moveList
     public void push(GameButton button) {
-        moveList.push(button);
-        // will need to call a private method to check for a winning move
-
+        // push to button stack
+        buttonStack.push(button);
+        int p = button.getColor();
+        int r = button.getRow();
+        int c = button.getCol();
+        // get data from GameButton and parse into string
+        String data = "p" + p + ": " + "row: " + r + ", col: " + c;
+        // add to the front of moveList
+        moveList.add(0, data);
     }
 
-    private GameButton pop() {
-        return moveList.pop();
+    public void pop() {
+        if (buttonStack.empty()) {
+            return;
+        }
+        // pop from button stack
+        GameButton button = buttonStack.pop();
+        button.unclick();
+        // remove index 0 from ObservableList
+        moveList.remove(0);
     }
 
     // private method creates fills grid with GameButtons
@@ -137,25 +152,23 @@ public class Game {
         }
     }
 
-    private VBox initPlayerStatus() {
+    private void initPlayerStatus() {
         // creating p1 and p2 TextFields
         p1 = new TextField("Player 1");
         p2 = new TextField("Player 2");
-        VBox layout = new VBox(p1, p2);
+        vbox = new VBox(p1, p2);
 
         // style and disable text fields
         p1.setStyle("-fx-background-color: yellow");
         p1.setEditable(false);
         p2.setStyle("-fx-background-color: grey");
         p2.setEditable(false);
-
-        return layout;
     }
 
     // this method is called when a GameButton is clicked
     private void clickEvent(GameButton b) {
         // scan for a win
-    	moveList.push(b);
+    	this.push(b);
         if (scanForWin(currentTurn) == currentTurn) {
             System.out.println("PLAYER " + currentTurn + " WINS!");
         }
@@ -176,9 +189,6 @@ public class Game {
     
  // this method is called when a GameButton is clicked
     private void unclickEvent(GameButton b) {
-        // pop button from moveList
-    	moveList.pop();
-        
         System.out.println("\n");
         // update currentTurn
         if (currentTurn == 1) {
@@ -252,6 +262,7 @@ public class Game {
                         else if (currCol < 3) {
                             System.out.println("SEARCH DOWN RIGHT");
                             if (searchDownRight(r,c,p)) { return p; }
+                        } else {
                             System.out.println("SEARCH DOWN LEFT");
                             if (searchDownLeft(r,c,p)) { return p; }
                         }
