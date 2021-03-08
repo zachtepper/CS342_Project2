@@ -38,8 +38,7 @@ public class JavaFXTemplate extends Application {
 
         // will start the game when clicked
         Button start = new Button("Start Game");
-        start.setStyle("-fx-background-color: silver;" + "-fx-font-color: darkMagenta" +
-        "-fx-border-color: darkMagenta;" + "-fx-border-size: 20;" + "-fx-font-size: 24;");
+        start.setStyle("-fx-background-color: silver; -fx-font-color: darkMagenta; -fx-border-color: darkMagenta; -fx-border-size: 20; -fx-font-size: 24;");
         start.setMaxSize(400, 200);
         start.setPrefSize(400, 200);
         // handler to switch scenes and start game

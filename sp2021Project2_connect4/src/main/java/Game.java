@@ -62,6 +62,14 @@ public class Game {
     public void setTheme(int t) { theme = t; }
 
     public ListView<String> getMoveList() { return listView; }
+
+    public GameButton[][] getBoard() {
+        return board;
+    }
+
+    public Stack<GameButton> getButtonStack() {
+        return buttonStack;
+    }
     
     // resets all information if new game started
     public void reset() {
